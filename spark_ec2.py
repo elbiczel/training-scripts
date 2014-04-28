@@ -65,7 +65,7 @@ def parse_args():
       help="Availability zone to launch instances in, or 'all' to spread " +
            "slaves across multiple (an additional $0.01/Gb for bandwidth" +
            "between zones applies)")
-  parser.add_option("-a", "--ami", default="latest",
+  parser.add_option("-a", "--ami", default="ami-452f622c",
       help="Amazon Machine Image ID to use, or 'latest' to use latest " +
            "available AMI (default: latest)")
   parser.add_option("-D", metavar="[ADDRESS:]PORT", dest="proxy_port",
@@ -415,7 +415,7 @@ def setup_cluster(conn, master_nodes, slave_nodes, zoo_nodes, opts, deploy_ssh_k
   # NOTE: We should clone the repository before running deploy_files to
   # prevent ec2-variables.sh from being overwritten
   ssh(master, opts,
-      "rm -rf spark-ec2 && git clone -b ampcamp4 https://github.com/mesos/spark-ec2.git")
+      "rm -rf spark-ec2 && git clone -b ampcamp4 https://github.com/elbiczel/spark-ec2.git")
 
   print "Deploying files to master..."
   deploy_files(conn, "deploy.generic", opts, master_nodes, slave_nodes,
@@ -736,8 +736,8 @@ def wait_for_spark_cluster(master_nodes, opts):
   count = 0
   while err != 0 and count < 10:
     # try to restart spark
-    ssh(master, opts, '/root/spark/sbin/stop-all.sh')
-    ssh(master, opts, '/root/spark/sbin/start-all.sh')
+    ssh(master, opts, '/root/spark/bin/stop-all.sh')
+    ssh(master, opts, '/root/spark/bin/start-all.sh')
     time.sleep(5)
     err = check_spark_cluster(master_nodes, opts)
     count = count + 1
